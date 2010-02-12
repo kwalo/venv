@@ -9,18 +9,22 @@ zsh.
 Features
 ========
 
-#. All virtual environments are kept in one place
-#. Support for bash and zsh
-#. Single command as entry point
+1. All virtual environments are kept in one place
+2. Support for bash and zsh
+3. Single command as entry point
 
 Setup
 =====
 
 Bash users, add following line to ~/.bashrc:
 
+::
+
     source /path/to/venvinit
 
 Zsh users, place venvinit file somewhere in your fpath and autoload it:
+
+::
 
     fpath=(~/.zsh/functions $fpath)
     autoload -U venvinit && venvinit
@@ -29,22 +33,32 @@ Zsh users, place venvinit file somewhere in your fpath and autoload it:
 Basic usage
 ===========
 
-#. Create virtualenv
+1. Create virtualenv
+
+::
 
     venv create sandbox
 
-#. List all your virtual environments
+2. List all your virtual environments
+
+::
 
     venv list
 
-#. Activate it
+3. Activate it
+
+::
 
     venv activate sandbox
 
-#. Deactivate
+4. Deactivate
+
+::
 
     venv deactivate
 
-#. Remove virtual environment
+5. Remove virtual environment
+
+::
 
     venv remove sandbox
