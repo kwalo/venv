@@ -33,31 +33,31 @@ Zsh users, place venvinit file somewhere in your fpath and autoload it:
 Basic usage
 ===========
 
-1. Create virtualenv
+Create virtualenv:
 
 ::
 
     venv create sandbox
 
-2. List all your virtual environments
+List all your virtual environments:
 
 ::
 
     venv list
 
-3. Activate it
+Activate it:
 
 ::
 
     venv activate sandbox
 
-4. Deactivate
+Deactivate:
 
 ::
 
     venv deactivate
 
-5. Remove virtual environment
+Remove virtual environment:
 
 ::
 
