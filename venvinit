@@ -54,7 +54,7 @@ venv () {
         create)
         venv_create $virtualenv $@
         ;;
-        remove)
+        remove|rm)
         venv_remove $virtualenv
         ;;
         activate)
@@ -63,7 +63,7 @@ venv () {
         deactivate)
         venv_deactivate
         ;;
-        list)
+        list|ls)
         ls -1 $VENV_HOME
         ;;
         cd)
@@ -131,10 +131,10 @@ venv_help_basic () {
     echo
     echo "Available commands:"
     echo "   create"
-    echo "   remove"
+    echo "   remove (rm)"
     echo "   activate"
     echo "   deactivate"
-    echo "   list"
+    echo "   list (ls)"
     echo "   cd"
     echo "   site-packages (sp)"
     echo "   ls-site-packages (lsp)"
