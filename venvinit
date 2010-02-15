@@ -58,7 +58,7 @@ venv () {
         venv_remove $virtualenv
         ;;
         activate)
-        venv_activate $virtualenv || venv_error "No such virtualenv!"
+        venv_activate $virtualenv
         ;;
         deactivate)
         venv_deactivate
@@ -88,11 +88,6 @@ venv () {
     esac
 }
 
-venv_error () {
-    echo "ERROR:" $@
-    return 1
-}
-
 venv_function_defined () {
     if [[ -n "$ZSH_NAME" ]]; then
         functions $1 > /dev/null 2>&1
@@ -104,12 +99,15 @@ venv_function_defined () {
 }
 
 venv_set_path () {
-    virtualenv=$1
-    [[ -z "$virtualenv" ]] && virtualenv='.'
-    if [[ ! -d "$virtualenv" ]]; then
-        virtualenv=${VENV_HOME}/$virtualenv
+    if [[ -z "$1" ]]; then
+        return 1
     fi
+    if [[ "$1" != $(basename "$1") ]]; then
+        return 1
+    fi
+    virtualenv="${VENV_HOME}/$1"
     if [[ ! -d "$virtualenv" ]]; then
+        unset virtualenv
         return 1
     fi
     return 0
@@ -122,7 +120,8 @@ venv_help () {
     elif [[ -n "$command" ]] && venv_function_defined venv_help_"$command"; then
         venv_help_"$command"
     else
-        venv_error "No such command: $command"
+        echo "ERROR: No such command: $command"
+        return 1
     fi
 }
 
@@ -159,7 +158,13 @@ venv_help_create () {
 }
 
 venv_create () {
+    test -z "$1" && venv_help_create && return 1
+    if [[ "$1" != $(basename "$1") ]]; then
+        echo "ERROR: Invalid virtualenv name!"
+        return 1
+    fi
     venv_set_path $1 && echo "ERROR: Virtualenv already exists!" && return 1
+    virtualenv="${VENV_HOME}/$1"
     shift 1
     virtualenv $@ $virtualenv
 }
@@ -171,6 +176,11 @@ venv_help_remove () {
 }
 
 venv_remove() {
+    test -z "$1" && venv_help_remove && return 1
+    if [[ "$1" = "$venv_name" ]]; then
+        echo "ERROR: Cannot remove active virtualenv!"
+        return 1
+    fi
     venv_set_path $1
     rm -fr $virtualenv
 }
@@ -182,6 +192,7 @@ venv_help_activate () {
 }
 
 venv_activate () {
+    test -z "$1" && venv_help_activate && return 1
     venv_set_path $1 || return 1
     local OLD_PS1=$PS1
     source $virtualenv/bin/activate
