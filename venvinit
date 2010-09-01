@@ -46,40 +46,36 @@ venv () {
     if [[ -n $action ]]; then
         shift 1
     fi
-    virtualenv=$1
-    if [[ -n $virtualenv ]]; then
-        shift 1
-    fi
     case $action in
         create)
-        venv_create $virtualenv $@
+        venv_run_command create $@
         ;;
         remove|rm)
-        venv_remove $virtualenv
+        venv_run_command remove $@
         ;;
         activate)
-        venv_activate $virtualenv
+        venv_run_command activate $@
         ;;
         deactivate|off)
-        venv_deactivate
+        venv_run_command deactivate $@
         ;;
         list|ls)
-        ls -1 $VENV_HOME
+            venv_run_command list $@
         ;;
         cd)
-        venv_cd $virtualenv
+        venv_run_command cd $@
         ;;
         sp|site-packages)
-        venv_site_packages $virtualenv
+        venv_run_command site_packages $@
         ;;
         lsp|ls-site-packages)
-        venv_ls_site_packages $virtualenv
+        venv_run_command ls-site-packages $@
         ;;
         help|--help)
-        venv_help $virtualenv
+        venv_help $@
         ;;
         *)
-        test -n "$action" && venv_activate $action
+        test -n "$action" && venv_activate $action $@
         if [[ $? != 0 ]]; then
             venv_help
             return 1
@@ -113,6 +109,20 @@ venv_set_path () {
     return 0
 }
 
+venv_run_command () {
+    local command=$1
+    case "$2" in
+        --help|-h)
+            venv_help_$command
+            ;;
+        *)
+            shift 1
+            venv_$command $@
+            ;;
+    esac
+
+}
+
 venv_help () {
     local command=$1
     if [[ -z "$command" ]]; then
@@ -144,17 +154,20 @@ venv_help_basic () {
 
 venv_help_list () {
     echo "Usage: venv list"
-    echo "Lists all virtual environments created by venv"
     echo
+    echo "Lists all virtual environments created by venv"
+}
+
+venv_list () {
+    ls -1 $VENV_HOME
 }
 
 venv_help_create () {
     echo "Usage: venv create VIRTUALENV [OPTIONS]"
-    echo 'Create new virtualenv'
     echo
+    echo 'Create new virtualenv'
     echo "This command creates new virtualenv inside \$VENV_HOME directory"
     echo "OPTIONS are passed directly to virtualenv command."
-    echo
 }
 
 venv_create () {
@@ -171,8 +184,8 @@ venv_create () {
 
 venv_help_remove () {
     echo "Usage: venv remove VIRTUALENV"
-    echo "Permanently removes virtualenv"
     echo
+    echo "Permanently removes virtualenv"
 }
 
 venv_remove() {
@@ -187,8 +200,8 @@ venv_remove() {
 
 venv_help_activate () {
     echo "Usage: venv activate VIRTUALENV"
-    echo "Activates virtualenv"
     echo
+    echo "Activates virtualenv"
 }
 
 venv_activate () {
@@ -206,8 +219,8 @@ venv_activate () {
 
 venv_help_deactivate () {
     echo "Usage: venv deactivate"
-    echo "Deactivates virtualenv"
     echo
+    echo "Deactivates virtualenv"
 }
 
 venv_deactivate () {
@@ -217,10 +230,10 @@ venv_deactivate () {
 
 venv_help_cd () {
     echo "Usage: venv cd [VIRTUALENV]"
+    echo
     echo "Changes current directory to VIRTUALENV."
     echo "If VIRTUALENV options is ommited, it changes directory to currently"
     echo "active virtualenv."
-    echo
 }
 
 venv_cd() {
@@ -238,8 +251,8 @@ venv_cd() {
 
 venv_help_site-packages () {
     echo "Usage: venv site-packages [VIRTUALENV]"
-    echo "Changes directory to site-packages directory of virtualenv"
     echo
+    echo "Changes directory to site-packages directory of virtualenv"
 }
 
 venv_site_packages() {
@@ -258,11 +271,11 @@ venv_site_packages() {
 
 venv_help_ls-site-packages () {
     echo "Usage venv ls-site-packages [VIRTUALENV]"
-    echo "Lists contents of site-packages directory"
     echo
+    echo "Lists contents of site-packages directory"
 }
 
-venv_ls_site_packages() {
+venv_ls-site-packages() {
     virtualenv=$1
     if [[ -n "$virtualenv" ]]; then
         venv_set_path $1 || return 1
