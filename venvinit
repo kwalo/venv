@@ -60,7 +60,7 @@ venv () {
         activate)
         venv_activate $virtualenv
         ;;
-        deactivate)
+        deactivate|off)
         venv_deactivate
         ;;
         list|ls)
@@ -133,7 +133,7 @@ venv_help_basic () {
     echo "   create"
     echo "   remove (rm)"
     echo "   activate"
-    echo "   deactivate"
+    echo "   deactivate (off)"
     echo "   list (ls)"
     echo "   cd"
     echo "   site-packages (sp)"
