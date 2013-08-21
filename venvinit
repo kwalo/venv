@@ -194,7 +194,7 @@ venv_remove() {
         echo "ERROR: Cannot remove active virtualenv!"
         return 1
     fi
-    venv_set_path $1
+    venv_set_path $1 ||  echo "Virtualenv $1 doesn't exist" && return 1
     rm -fr $virtualenv
 }
 
